@@ -5,6 +5,7 @@
 package it.polito.tdp.genes;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.genes.model.Model;
@@ -38,12 +39,30 @@ public class FXMLController {
 
     @FXML
     void doContaArchi(ActionEvent event) {
-
+        
+    	String valoreSoglia = this.txtSoglia.getText();
+    	try {
+    		double soglia = Double.parseDouble(valoreSoglia);
+    		if(soglia<this.model.getPesoMinimo() || soglia>this.model.getPesoMassimo()) {
+    			txtResult.setText("inserisci un numero tra peso minimo e massimo come soglia!");
+    			return;
+    		}
+    		txtResult.appendText("\n soglia : "+soglia+" --> maggiori "+this.model.getArchiSopraSoglia(soglia).size()+
+    				" , minori "+this.model.getArchiSottoSoglia(soglia).size());
+    			
+    	}catch (NumberFormatException e) {
+    		e.printStackTrace();
+    		txtResult.setText("inserisci un numero tra peso minimo e massimo come soglia!");
+    	}
     }
 
     @FXML
     void doRicerca(ActionEvent event) {
 
+    	List<Integer> percorso = this.model.ricorsione();
+    	for(int i : percorso) {
+    		txtResult.appendText(i+" --> ");
+    	}
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete
@@ -57,6 +76,12 @@ public class FXMLController {
 
 	public void setModel(Model model) {
 		this.model = model ;
+		
+		this.model.CreaGrafo();
+		txtResult.appendText("Grafo creato : "+this.model.getChromosomes().size()+" vertici , "
+				+this.model.getArchi().size()+" archi \n");
+		txtResult.appendText("peso minimo = "+this.model.getPesoMinimo()+ " , "
+				+ "peso massimo = "+ this.model.getPesoMassimo());
 		
 	}
 }
